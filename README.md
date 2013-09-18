@@ -7,6 +7,8 @@ RPis are configured in master-slave configuration. Master maintains UI and notif
 
 Conversion of two jpgs to 3d file (.mpo) will be done on a PC. 
 
+![RPiCam3D.jpg](/docs/RPiCam3D.jpg)
+
 Components:
 * https://github.com/XavierBerger/pcd8544/ + pcd8544 display from dx.com
 * http://wiringpi.com/
