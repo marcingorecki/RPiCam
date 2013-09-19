@@ -5,38 +5,42 @@ import time, os, sys
 import wiringpi2 as wiringpi
 import photo
 import comm_server
+import actions
 
 if not os.geteuid() == 0:
     sys.exit('Script must be run as root')
 
 ON, OFF = [1, 0]
-BUTTON_GPIO = 0
+BUTTON_OK = 0
+BUTTON_FKEY = 6
 INPUT = 0
+current = 0
 
 def init():
   lcd.init()
   lcd.cls()
   lcd.backlight(ON)
 
-  wiringpi.pinMode(BUTTON_GPIO,INPUT)
-
-def get_time():
-  date = time.strftime("%Y-%b-%d", time.localtime())
-  hour = time.strftime("%H:%M:%S", time.localtime())
-  return date+"_"+hour 
+  wiringpi.pinMode(BUTTON_OK,INPUT)
+  wiringpi.pinMode(BUTTON_FKEY,INPUT)
 
 def display_main_screen():
   lcd.cls()
-  lcd.centre_text(1,"Press shutter button")
+  lcd.centre_text(1,actions.get_text(current))
 
 def main_loop():
+  global current
   display_main_screen()
   while 1:
-    key = wiringpi.digitalRead(BUTTON_GPIO)
+    key = wiringpi.digitalRead(BUTTON_OK)
+    fkey = wiringpi.digitalRead(BUTTON_FKEY)
     if key == 1:
-      now = get_time()
-      comm_server.send_to_client(now)
-      photo.take_photo(now)
+      #photo.take_sync_photo(comm_server, lcd)
+      actions.run_command(current, comm_server, lcd)
+      display_main_screen()
+    if fkey == 1:
+      print('fkey')
+      current=(current+1)%actions.get_count()
       display_main_screen()
     time.sleep(0.2)
 
