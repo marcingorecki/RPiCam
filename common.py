@@ -1,7 +1,7 @@
 import sys
 from subprocess import call
 
-def shutdown:
+def shutdown():
    call (["shutdown -h now"], shell=True)
 
 def quit(comm_server, lcd):
